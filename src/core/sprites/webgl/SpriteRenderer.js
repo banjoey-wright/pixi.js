@@ -114,8 +114,6 @@ export default class SpriteRenderer extends ObjectRenderer
         // create a couple of buffers
         this.indexBuffer = glCore.GLBuffer.createIndexBuffer(gl, this.indices, gl.STATIC_DRAW);
 
-        this.textureMap = new Float32Array(this.MAX_TEXTURES);
-
         // we use the second shader as the first one depending on your browser may omit aTextureId
         // as it is not used by the shader so is optimized out.
 
@@ -277,14 +275,14 @@ export default class SpriteRenderer extends ObjectRenderer
                         currentGroup.start = i;
                     }
 
-                    if(nextTexture._virtalBoundId === -1)
+                    if (nextTexture._virtalBoundId === -1)
                     {
                         for (let j = 0; j < MAX_TEXTURES; ++j)
                         {
                             const tIndex = (j + TEXTURE_TICK) % MAX_TEXTURES;
                             const t = boundTextures[tIndex];
 
-                            if(t._enabled !== TICK )
+                            if (t._enabled !== TICK)
                             {
                                 TEXTURE_TICK++;
                                 t._virtalBoundId = -1;
@@ -292,7 +290,7 @@ export default class SpriteRenderer extends ObjectRenderer
                                 boundTextures[tIndex] = nextTexture;
                                 break;
                             }
-                        };
+                        }
                     }
 
                     nextTexture.touched = touch;
@@ -442,7 +440,6 @@ export default class SpriteRenderer extends ObjectRenderer
 
                 // reset the virtualId..
                 currentTexture._virtalBoundId = -1;
-
             }
 
             // set the blend mode..
