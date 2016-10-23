@@ -90,6 +90,7 @@ export default class SpriteRenderer extends ObjectRenderer
 
         this.vaoMax = 2;
         this.vertexCount = 0;
+
         this.renderer.on('prerender', this.onPrerender, this);
     }
 
@@ -112,6 +113,8 @@ export default class SpriteRenderer extends ObjectRenderer
 
         // create a couple of buffers
         this.indexBuffer = glCore.GLBuffer.createIndexBuffer(gl, this.indices, gl.STATIC_DRAW);
+
+        this.textureMap = new Float32Array(this.MAX_TEXTURES);
 
         // we use the second shader as the first one depending on your browser may omit aTextureId
         // as it is not used by the shader so is optimized out.
@@ -270,6 +273,26 @@ export default class SpriteRenderer extends ObjectRenderer
                         currentGroup.start = i;
                     }
 
+                    if(nextTexture._virtalBoundId === -1)
+                    {
+                        nextTexture._virtalBoundId = TEXTURE_TICK;
+                        for (let j = 0; j < this.MAX_TEXTURES; ++j)
+                        {
+                            var tIndex = (j + TEXTURE_TICK) % this.MAX_TEXTURES;
+
+                            var t = boundTextures[tIndex];
+
+                            if(t._enabled !== TICK )
+                            {
+                                TEXTURE_TICK++;
+                                t._virtalBoundId = -1;
+                                nextTexture._virtalBoundId = tIndex;
+                                boundTextures[tIndex] = nextTexture;
+                                break;
+                            }
+                        };
+                    }
+
                     nextTexture.touched = touch;
 
                     if (nextTexture._virtalBoundId === -1)
@@ -302,6 +325,8 @@ export default class SpriteRenderer extends ObjectRenderer
                 }
             }
 
+
+      //      console.log(map)
             vertexData = sprite.vertexData;
 
             // TODO this sum does not need to be set each frame..

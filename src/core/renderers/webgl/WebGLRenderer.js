@@ -229,6 +229,8 @@ export default class WebGLRenderer extends SystemRenderer
 
         // setup the width/height properties and gl viewport
         this.resize(this.width, this.height);
+
+
     }
 
     /**
@@ -277,7 +279,7 @@ export default class WebGLRenderer extends SystemRenderer
 
         if (clear !== undefined ? clear : this.clearBeforeRender)
         {
-            this._activeRenderTarget.clear();
+            //this._activeRenderTarget.clear();
         }
 
         displayObject.renderWebGL(this);
@@ -387,7 +389,9 @@ export default class WebGLRenderer extends SystemRenderer
 
         if (renderTexture)
         {
+
             const baseTexture = renderTexture.baseTexture;
+
 
             if (!baseTexture._glRenderTargets[this.CONTEXT_UID])
             {
@@ -501,6 +505,7 @@ export default class WebGLRenderer extends SystemRenderer
 
         if (!glTexture)
         {
+
             // this will also bind the texture..
             this.textureManager.updateTexture(texture, location);
         }
