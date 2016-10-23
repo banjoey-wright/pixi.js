@@ -163,6 +163,13 @@ export default class TextureManager
         return glTexture;
     }
 
+    bindTextureToGPU(texture, location)
+    {
+        // this assumes the texture exists and created!
+        //_boundTextures
+
+    }
+
     /**
      * Deletes the texture from WebGL
      *

@@ -247,6 +247,7 @@ export default class SpriteRenderer extends ObjectRenderer
                 // finish a group..
                 blendMode = sprite.blendMode;
 
+                currentGroup.textureCount = textureCount;
                 // force the batch to break!
                 currentTexture = null;
                 textureCount = MAX_TEXTURES;
@@ -264,6 +265,9 @@ export default class SpriteRenderer extends ObjectRenderer
                         TICK++;
 
                         currentGroup.size = i - currentGroup.start;
+                        currentGroup.textureCount = textureCount;
+
+                        textureCount = 0;
 
                         textureCount = 0;
 
@@ -275,12 +279,10 @@ export default class SpriteRenderer extends ObjectRenderer
 
                     if(nextTexture._virtalBoundId === -1)
                     {
-                        nextTexture._virtalBoundId = TEXTURE_TICK;
-                        for (let j = 0; j < this.MAX_TEXTURES; ++j)
+                        for (let j = 0; j < MAX_TEXTURES; ++j)
                         {
-                            var tIndex = (j + TEXTURE_TICK) % this.MAX_TEXTURES;
-
-                            var t = boundTextures[tIndex];
+                            const tIndex = (j + TEXTURE_TICK) % MAX_TEXTURES;
+                            const t = boundTextures[tIndex];
 
                             if(t._enabled !== TICK )
                             {
@@ -325,8 +327,6 @@ export default class SpriteRenderer extends ObjectRenderer
                 }
             }
 
-
-      //      console.log(map)
             vertexData = sprite.vertexData;
 
             // TODO this sum does not need to be set each frame..
@@ -384,6 +384,7 @@ export default class SpriteRenderer extends ObjectRenderer
         }
 
         currentGroup.size = i - currentGroup.start;
+        currentGroup.textureCount = textureCount;
 
         if (!CAN_UPLOAD_SAME_BUFFER)
         {
@@ -441,6 +442,7 @@ export default class SpriteRenderer extends ObjectRenderer
 
                 // reset the virtualId..
                 currentTexture._virtalBoundId = -1;
+
             }
 
             // set the blend mode..
