@@ -218,6 +218,7 @@ export default class WebGLRenderer extends SystemRenderer
             const empty = new BaseTexture();
 
             empty._glTextures[this.CONTEXT_UID] = emptyGLTexture;
+
             this.boundTextures[i] = tempObj;
             this.emptyTextures[i] = empty;
             this.bindTexture(null, i);
@@ -496,6 +497,9 @@ export default class WebGLRenderer extends SystemRenderer
 
         const gl = this.gl;
         const glTexture = texture._glTextures[this.CONTEXT_UID];
+
+        // TODO - what if we bind a texture that is already bound?
+        // Should be ok for now..
 
         if (!glTexture)
         {

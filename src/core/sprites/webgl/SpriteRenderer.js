@@ -207,6 +207,8 @@ export default class SpriteRenderer extends ObjectRenderer
 
         const touch = this.renderer.textureGC.count;
 
+        const touch = this.renderer.textureGC.count;
+
         let index = 0;
         let nextTexture;
         let currentTexture;
@@ -275,6 +277,8 @@ export default class SpriteRenderer extends ObjectRenderer
                         currentGroup.start = i;
                     }
 
+                    nextTexture.touched = touch;
+
                     if (nextTexture._virtalBoundId === -1)
                     {
                         for (let j = 0; j < MAX_TEXTURES; ++j)
@@ -285,8 +289,10 @@ export default class SpriteRenderer extends ObjectRenderer
                             if (t._enabled !== TICK)
                             {
                                 TEXTURE_TICK++;
+
                                 t._virtalBoundId = -1;
                                 nextTexture._virtalBoundId = tIndex;
+
                                 boundTextures[tIndex] = nextTexture;
                                 break;
                             }
