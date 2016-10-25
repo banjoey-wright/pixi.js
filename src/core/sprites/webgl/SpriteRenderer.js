@@ -247,7 +247,6 @@ export default class SpriteRenderer extends ObjectRenderer
                 // finish a group..
                 blendMode = sprite.blendMode;
 
-                currentGroup.textureCount = textureCount;
                 // force the batch to break!
                 currentTexture = null;
                 textureCount = MAX_TEXTURES;
@@ -265,7 +264,6 @@ export default class SpriteRenderer extends ObjectRenderer
                         TICK++;
 
                         currentGroup.size = i - currentGroup.start;
-                        currentGroup.textureCount = textureCount;
 
                         textureCount = 0;
 
@@ -284,6 +282,7 @@ export default class SpriteRenderer extends ObjectRenderer
                         for (let j = 0; j < MAX_TEXTURES; ++j)
                         {
                             const tIndex = (j + TEXTURE_TICK) % MAX_TEXTURES;
+
                             const t = boundTextures[tIndex];
 
                             if (t._enabled !== TICK)
@@ -291,6 +290,7 @@ export default class SpriteRenderer extends ObjectRenderer
                                 TEXTURE_TICK++;
 
                                 t._virtalBoundId = -1;
+
                                 nextTexture._virtalBoundId = tIndex;
 
                                 boundTextures[tIndex] = nextTexture;
@@ -388,7 +388,6 @@ export default class SpriteRenderer extends ObjectRenderer
         }
 
         currentGroup.size = i - currentGroup.start;
-        currentGroup.textureCount = textureCount;
 
         if (!CAN_UPLOAD_SAME_BUFFER)
         {

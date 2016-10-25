@@ -543,22 +543,30 @@ export default class WebGLRenderer extends SystemRenderer
         return this;
     }
 
+     /**
+     * unbinds the texture ...
+     *
+     * @param {PIXI.Texture} texture - the texture to unbind
+     * @return {PIXI.WebGLRenderer} Returns itself.
+     */
     unbindTexture(texture)
     {
         const gl = this.gl;
 
         texture = texture.baseTexture || texture;
 
-        for (var i = 0; i < this.boundTextures.length; i++)
+        for (let i = 0; i < this.boundTextures.length; i++)
         {
-            if(this.boundTextures[i] === texture)
+            if (this.boundTextures[i] === texture)
             {
                 this.boundTextures[i] = this.emptyTextures[i];
 
                 gl.activeTexture(gl.TEXTURE0 + i);
                 gl.bindTexture(gl.TEXTURE_2D, this.emptyTextures[i]._glTextures[this.CONTEXT_UID].texture);
             }
-        };
+        }
+
+        return this;
     }
 
     /**
