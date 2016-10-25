@@ -239,6 +239,7 @@ export default class FilterManager extends WebGLManager
         renderer.bindVao(this.quad.vao);
 
         renderer.bindRenderTarget(output);
+            const gl = renderer.gl;
 
         if (clear)
         {
@@ -531,6 +532,11 @@ export default class FilterManager extends WebGLManager
         renderTarget.resolution = resolution;
         renderTarget.defaultFrame.width = renderTarget.size.width = minWidth / resolution;
         renderTarget.defaultFrame.height = renderTarget.size.height = minHeight / resolution;
+
+        if(!renderTarget.___)
+        {
+            renderTarget.___ = {_glTextures:{0:renderTarget.texture}};
+        }
 
         return renderTarget;
     }

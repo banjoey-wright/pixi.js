@@ -543,6 +543,24 @@ export default class WebGLRenderer extends SystemRenderer
         return this;
     }
 
+    unbindTexture(texture)
+    {
+        const gl = this.gl;
+
+        texture = texture.baseTexture || texture;
+
+        for (var i = 0; i < this.boundTextures.length; i++)
+        {
+            if(this.boundTextures[i] === texture)
+            {
+                this.boundTextures[i] = this.emptyTextures[i];
+
+                gl.activeTexture(gl.TEXTURE0 + i);
+                gl.bindTexture(gl.TEXTURE_2D, this.emptyTextures[i]._glTextures[this.CONTEXT_UID].texture);
+            }
+        };
+    }
+
     /**
      * Creates a new VAO from this renderer's context and state.
      *
