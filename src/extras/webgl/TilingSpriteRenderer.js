@@ -42,7 +42,6 @@ export default class TilingSpriteRenderer extends core.ObjectRenderer {
             glslify('./tilingSprite_simple.frag'));
 
         this.renderer.bindVao(null);
-
         this.quad = new core.Quad(gl, this.renderer.state.attribState);
         this.quad.initVao(this.shader);
     }
