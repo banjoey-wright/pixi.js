@@ -117,6 +117,8 @@ export default class SpriteRenderer extends ObjectRenderer
         // we use the second shader as the first one depending on your browser may omit aTextureId
         // as it is not used by the shader so is optimized out.
 
+        this.renderer.bindVao(null);
+
         for (let i = 0; i < this.vaoMax; i++)
         {
             this.vertexBuffers[i] = glCore.GLBuffer.createVertexBuffer(gl, null, gl.STREAM_DRAW);
@@ -358,9 +360,6 @@ export default class SpriteRenderer extends ObjectRenderer
 
         currentGroup.size = i - currentGroup.start;
 
-        // keep an eye out here!
-        // TODO - check this out for mobile!
-
         /*
         if (this.vaoMax <= this.vertexCount)
         {
@@ -374,11 +373,10 @@ export default class SpriteRenderer extends ObjectRenderer
                 .addAttribute(this.vertexBuffers[this.vertexCount], shader.attributes.aTextureCoord, gl.UNSIGNED_SHORT, true, this.vertByteSize, 2 * 4)
                 .addAttribute(this.vertexBuffers[this.vertexCount], shader.attributes.aColor, gl.UNSIGNED_BYTE, true, this.vertByteSize, 3 * 4)
                 .addAttribute(this.vertexBuffers[this.vertexCount], shader.attributes.aTextureId, gl.FLOAT, false, this.vertByteSize, 4 * 4);
-        }
+        }*/
 
         // this.vertexCount++;
         // set textures..
-        */
 
         this.vertexBuffers[this.vertexCount].upload(buffer.vertices, 0, true);
 
@@ -387,7 +385,7 @@ export default class SpriteRenderer extends ObjectRenderer
             this.renderer.boundTextures[i]._virtalBoundId = -1;
         }
 
-        // render the groups..
+        // / render the groups..
         for (i = 0; i < groupCount; i++)
         {
             const group = groups[i];
@@ -417,10 +415,11 @@ export default class SpriteRenderer extends ObjectRenderer
      */
     start()
     {
-        // this.renderer.bindShader(this.shader);
-        // TICK %= 1000;
-        this.vao = this.vaos[0].bind();
+        this.renderer.bindVao(this.vao);
         this.renderer.bindShader(this.shader);
+
+        // TODO - sure we can sort this!
+        this.vertexBuffers[this.vertexCount].bind();
     }
 
     /**
@@ -430,7 +429,6 @@ export default class SpriteRenderer extends ObjectRenderer
     stop()
     {
         this.flush();
-        this.vao.unbind();
     }
 
     /**

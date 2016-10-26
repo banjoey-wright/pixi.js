@@ -55,6 +55,8 @@ export class MeshRenderer extends core.ObjectRenderer {
 
         if (!glData)
         {
+            renderer.bindVao(null);
+
             glData = {
                 shader: this.shader,
                 vertexBuffer: glCore.GLBuffer.createVertexBuffer(gl, mesh.vertices, gl.STREAM_DRAW),
@@ -99,9 +101,8 @@ export class MeshRenderer extends core.ObjectRenderer {
 
         const drawMode = mesh.drawMode === Mesh.DRAW_MODES.TRIANGLE_MESH ? gl.TRIANGLE_STRIP : gl.TRIANGLES;
 
-        glData.vao.bind()
-            .draw(drawMode, mesh.indices.length)
-            .unbind();
+        renderer.bindVao(glData.vao);
+        glData.vao.draw(drawMode, mesh.indices.length, 0);
     }
 }
 
