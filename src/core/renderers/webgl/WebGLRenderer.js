@@ -170,6 +170,7 @@ export default class WebGLRenderer extends SystemRenderer
          * @member {PIXI.RenderTarget}
          */
         this._activeRenderTarget = null;
+
         this._nextTextureLocation = 0;
 
         this.setBlendMode(0);
