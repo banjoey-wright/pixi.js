@@ -164,7 +164,6 @@ export default class WebGLRenderer extends SystemRenderer
          * @member {PIXI.RenderTarget}
          */
         this._activeRenderTarget = null;
-        this._activeTextureLocation = 999;
         this._activeTexture = null;
 
         this.setBlendMode(0);
@@ -568,7 +567,6 @@ export default class WebGLRenderer extends SystemRenderer
 
         this._activeShader = null;
         this._activeRenderTarget = this.rootRenderTarget;
-        this._activeTextureLocation = 999;
         this._activeTexture = null;
 
         // bind the main frame buffer (the screen);
