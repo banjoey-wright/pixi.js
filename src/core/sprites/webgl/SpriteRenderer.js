@@ -225,13 +225,13 @@ export default class SpriteRenderer extends ObjectRenderer
         let i;
 
         // copy textures..
-        for (i = 0; i < MAX_TEXTURES; i++)
+        for (i = 0; i < MAX_TEXTURES; ++i)
         {
             boundTextures[i] = this.renderer.boundTextures[i];
             boundTextures[i]._virtalBoundId = i;
         }
 
-        for (i = 0; i < this.currentIndex; i++)
+        for (i = 0; i < this.currentIndex; ++i)
         {
             // upload the sprite elemetns...
             // they have all ready been calculated so we just need to push them into the buffer.
@@ -360,33 +360,40 @@ export default class SpriteRenderer extends ObjectRenderer
 
         currentGroup.size = i - currentGroup.start;
 
-        /*
+        // this is still needed for IOS performance..
+        // it realy doe not like uploading to  the same bufffer in a single frame!
         if (this.vaoMax <= this.vertexCount)
         {
             this.vaoMax++;
-            shader = this.shader;
             this.vertexBuffers[this.vertexCount] = glCore.GLBuffer.createVertexBuffer(gl, null, gl.STREAM_DRAW);
+
             // build the vao object that will render..
             this.vaos[this.vertexCount] = this.renderer.createVao()
                 .addIndex(this.indexBuffer)
-                .addAttribute(this.vertexBuffers[this.vertexCount], shader.attributes.aVertexPosition, gl.FLOAT, false, this.vertByteSize, 0)
-                .addAttribute(this.vertexBuffers[this.vertexCount], shader.attributes.aTextureCoord, gl.UNSIGNED_SHORT, true, this.vertByteSize, 2 * 4)
-                .addAttribute(this.vertexBuffers[this.vertexCount], shader.attributes.aColor, gl.UNSIGNED_BYTE, true, this.vertByteSize, 3 * 4)
-                .addAttribute(this.vertexBuffers[this.vertexCount], shader.attributes.aTextureId, gl.FLOAT, false, this.vertByteSize, 4 * 4);
-        }*/
+                .addAttribute(this.vertexBuffers[this.vertexCount], this.shader.attributes.aVertexPosition, gl.FLOAT, false, this.vertByteSize, 0)
+                .addAttribute(this.vertexBuffers[this.vertexCount], this.shader.attributes.aTextureCoord, gl.UNSIGNED_SHORT, true, this.vertByteSize, 2 * 4)
+                .addAttribute(this.vertexBuffers[this.vertexCount], this.shader.attributes.aColor, gl.UNSIGNED_BYTE, true, this.vertByteSize, 3 * 4)
+                .addAttribute(this.vertexBuffers[this.vertexCount], this.shader.attributes.aTextureId, gl.FLOAT, false, this.vertByteSize, 4 * 4);
+        }
 
         // this.vertexCount++;
         // set textures..
-
+        this.renderer.bindVao(this.vaos[this.vertexCount]);
         this.vertexBuffers[this.vertexCount].upload(buffer.vertices, 0, true);
+
+        if(false)
+        {
+
+            this.vertexCount++;
+        }
 
         for (i = 0; i < MAX_TEXTURES; i++)
         {
             this.renderer.boundTextures[i]._virtalBoundId = -1;
         }
 
-        // / render the groups..
-        for (i = 0; i < groupCount; i++)
+        // render the groups..
+        for (i = 0; i < groupCount; ++i)
         {
             const group = groups[i];
             const groupTextureCount = group.textureCount;
@@ -415,11 +422,7 @@ export default class SpriteRenderer extends ObjectRenderer
      */
     start()
     {
-        this.renderer.bindVao(this.vao);
         this.renderer.bindShader(this.shader);
-
-        // TODO - sure we can sort this!
-        this.vertexBuffers[this.vertexCount].bind();
     }
 
     /**
@@ -464,7 +467,7 @@ export default class SpriteRenderer extends ObjectRenderer
 
         this.sprites = null;
 
-        for (let i = 0; i < this.buffers.length; i++)
+        for (let i = 0; i < this.buffers.length; ++i)
         {
             this.buffers[i].destroy();
         }
