@@ -163,8 +163,8 @@ export function getSvgSize(svgString)
 
     if (sizeMatch)
     {
-        size[sizeMatch[1]] = Math.round(parseFloat(sizeMatch[2]));
-        size[sizeMatch[3]] = Math.round(parseFloat(sizeMatch[4]));
+        size[sizeMatch[1]] = Math.round(parseFloat(sizeMatch[3]));
+        size[sizeMatch[5]] = Math.round(parseFloat(sizeMatch[7]));
     }
 
     return size;
@@ -173,6 +173,7 @@ export function getSvgSize(svgString)
 /**
  * Skips the hello message of renderers that are created after this is run.
  *
+ * @memberof PIXI.utils
  */
 export function skipHello()
 {

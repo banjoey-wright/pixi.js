@@ -413,7 +413,7 @@ export default class BaseTexture extends EventEmitter
 
             if (!imageType)
             {
-                throw new Error('Invalid image type in URL.');
+                imageType = 'png';
             }
         }
 

@@ -15,5 +15,7 @@ require('./Point');
 require('./ObservablePoint');
 require('./Matrix');
 require('./Rectangle');
+require('./RoundedRectangle');
 require('./Circle');
 require('./Graphics');
+require('./BaseTexture');
