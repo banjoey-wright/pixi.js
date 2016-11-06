@@ -90,7 +90,10 @@ export class MeshRenderer extends core.ObjectRenderer {
         glData.vertexBuffer.upload();
 
         renderer.bindShader(glData.shader);
-        renderer.bindTexture(texture, 0);
+
+        const textLocation = renderer.smartBindTexture(texture);
+
+        glData.shader.uniforms.uSampler = textLocation;
         renderer.state.setBlendMode(mesh.blendMode);
 
         glData.shader.uniforms.translationMatrix = mesh.worldTransform.toArray(true);

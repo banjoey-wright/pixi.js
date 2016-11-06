@@ -168,7 +168,8 @@ export default class WebGLRenderer extends SystemRenderer
          * @member {PIXI.RenderTarget}
          */
         this._activeRenderTarget = null;
-        this._activeTexture = null;
+
+        this._nextTextureLocation = 0;
 
         this.setBlendMode(0);
     }
@@ -249,6 +250,8 @@ export default class WebGLRenderer extends SystemRenderer
         {
             return;
         }
+
+        this._nextTextureLocation = 0;
 
         if (!renderTexture)
         {
@@ -496,6 +499,37 @@ export default class WebGLRenderer extends SystemRenderer
         return this;
     }
 
+    /**
+     * Binds the texture but will choose a location for you.
+     *
+     * @param {PIXI.Texture} texture - the new texture
+     * @param {number} location - the texture location
+     * @return {PIXI.WebGLRenderer} Returns location.
+     */
+    smartBindTexture(texture, location)
+    {
+        texture = texture.baseTexture || texture;
+
+        for (let i = 0; i < this.boundTextures.length; i++)
+        {
+            if (this.boundTextures[i] === texture)
+            {
+                return i;
+            }
+        }
+
+        if (location === undefined)
+        {
+            this._nextTextureLocation++;
+            this._nextTextureLocation %= this.boundTextures.length;
+            location = this.boundTextures.length - this._nextTextureLocation - 1;
+        }
+
+        this.bindTexture(texture, location);
+
+        return location;
+    }
+
      /**
      * unbinds the texture ...
      *
@@ -543,7 +577,6 @@ export default class WebGLRenderer extends SystemRenderer
 
         this._activeShader = null;
         this._activeRenderTarget = this.rootRenderTarget;
-        this._activeTexture = null;
 
         // bind the main frame buffer (the screen);
         this.rootRenderTarget.activate();
