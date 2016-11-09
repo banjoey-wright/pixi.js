@@ -91,7 +91,7 @@ export class MeshRenderer extends core.ObjectRenderer {
 
         renderer.bindShader(glData.shader);
 
-        const textLocation = renderer.smartBindTexture(texture);
+        const textLocation = renderer.bindTexture(texture);
 
         glData.shader.uniforms.uSampler = textLocation;
         renderer.state.setBlendMode(mesh.blendMode);
