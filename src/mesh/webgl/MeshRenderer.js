@@ -7,7 +7,7 @@ const glslify = require('glslify'); // eslint-disable-line no-undef
 /**
  * WebGL renderer plugin for tiling sprites
  */
-export class MeshRenderer extends core.ObjectRenderer {
+export default class MeshRenderer extends core.ObjectRenderer {
 
     /**
      * constructor for renderer
@@ -93,9 +93,8 @@ export class MeshRenderer extends core.ObjectRenderer {
 
         renderer.bindShader(glData.shader);
 
-        const textLocation = renderer.bindTexture(texture);
+        glData.shader.uniforms.uSampler = renderer.bindTexture(texture);
 
-        glData.shader.uniforms.uSampler = textLocation;
         renderer.state.setBlendMode(mesh.blendMode);
 
         glData.shader.uniforms.translationMatrix = mesh.worldTransform.toArray(true);

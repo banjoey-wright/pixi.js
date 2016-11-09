@@ -474,6 +474,7 @@ export default class WebGLRenderer extends SystemRenderer
         texture.touched = this.textureGC.count;
 
         if (!forceLocation)
+<<<<<<< HEAD
         {
             // TODO - maybe look into adding boundIds.. save us the loop?
             for (let i = 0; i < this.boundTextures.length; i++)
@@ -493,6 +494,27 @@ export default class WebGLRenderer extends SystemRenderer
         }
         else
         {
+=======
+        {
+            // TODO - maybe look into adding boundIds.. save us the loop?
+            for (let i = 0; i < this.boundTextures.length; i++)
+            {
+                if (this.boundTextures[i] === texture)
+                {
+                    return i;
+                }
+            }
+
+            if (location === undefined)
+            {
+                this._nextTextureLocation++;
+                this._nextTextureLocation %= this.boundTextures.length;
+                location = this.boundTextures.length - this._nextTextureLocation - 1;
+            }
+        }
+        else
+        {
+>>>>>>> dev
             location = location || 0;
         }
 
