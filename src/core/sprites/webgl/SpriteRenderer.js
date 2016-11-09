@@ -4,7 +4,7 @@ import createIndicesForQuads from '../../utils/createIndicesForQuads';
 import generateMultiTextureShader from './generateMultiTextureShader';
 import checkMaxIfStatmentsInShader from '../../renderers/webgl/utils/checkMaxIfStatmentsInShader';
 import Buffer from './BatchBuffer';
-import { SPRITE_BATCH_SIZE, SPRITE_MAX_TEXTURES } from '../../const';
+import { SPRITE_BATCH_SIZE, SPRITE_MAX_TEXTURES, CAN_UPLOAD_SAME_BUFFER } from '../../const';
 import glCore from 'pixi-gl-core';
 import bitTwiddle from 'bit-twiddle';
 
@@ -90,7 +90,6 @@ export default class SpriteRenderer extends ObjectRenderer
 
         this.vaoMax = 2;
         this.vertexCount = 0;
-
         this.renderer.on('prerender', this.onPrerender, this);
     }
 
@@ -203,6 +202,7 @@ export default class SpriteRenderer extends ObjectRenderer
         const uint32View = buffer.uint32View;
 
         const boundTextures = this.boundTextures;
+        const rendererBoundTextures = this.renderer.boundTextures;
 
         const touch = this.renderer.textureGC.count;
 
@@ -227,7 +227,7 @@ export default class SpriteRenderer extends ObjectRenderer
         // copy textures..
         for (i = 0; i < MAX_TEXTURES; ++i)
         {
-            boundTextures[i] = this.renderer.boundTextures[i];
+            boundTextures[i] = rendererBoundTextures[i];
             boundTextures[i]._virtalBoundId = i;
         }
 
@@ -360,36 +360,41 @@ export default class SpriteRenderer extends ObjectRenderer
 
         currentGroup.size = i - currentGroup.start;
 
-        // this is still needed for IOS performance..
-        // it realy doe not like uploading to  the same bufffer in a single frame!
-        if (this.vaoMax <= this.vertexCount)
+        if (!CAN_UPLOAD_SAME_BUFFER)
         {
-            this.vaoMax++;
-            this.vertexBuffers[this.vertexCount] = glCore.GLBuffer.createVertexBuffer(gl, null, gl.STREAM_DRAW);
+            // this is still needed for IOS performance..
+            // it realy doe not like uploading to  the same bufffer in a single frame!
+            if (this.vaoMax <= this.vertexCount)
+            {
+                this.vaoMax++;
+                this.vertexBuffers[this.vertexCount] = glCore.GLBuffer.createVertexBuffer(gl, null, gl.STREAM_DRAW);
 
-            // build the vao object that will render..
-            this.vaos[this.vertexCount] = this.renderer.createVao()
-                .addIndex(this.indexBuffer)
-                .addAttribute(this.vertexBuffers[this.vertexCount], this.shader.attributes.aVertexPosition, gl.FLOAT, false, this.vertByteSize, 0)
-                .addAttribute(this.vertexBuffers[this.vertexCount], this.shader.attributes.aTextureCoord, gl.UNSIGNED_SHORT, true, this.vertByteSize, 2 * 4)
-                .addAttribute(this.vertexBuffers[this.vertexCount], this.shader.attributes.aColor, gl.UNSIGNED_BYTE, true, this.vertByteSize, 3 * 4)
-                .addAttribute(this.vertexBuffers[this.vertexCount], this.shader.attributes.aTextureId, gl.FLOAT, false, this.vertByteSize, 4 * 4);
-        }
+                this.renderer.bindVao(null);
 
-        // this.vertexCount++;
-        // set textures..
-        this.renderer.bindVao(this.vaos[this.vertexCount]);
-        this.vertexBuffers[this.vertexCount].upload(buffer.vertices, 0, true);
+                // build the vao object that will render..
+                this.vaos[this.vertexCount] = this.renderer.createVao()
+                    .addIndex(this.indexBuffer)
+                    .addAttribute(this.vertexBuffers[this.vertexCount], this.shader.attributes.aVertexPosition, gl.FLOAT, false, this.vertByteSize, 0)
+                    .addAttribute(this.vertexBuffers[this.vertexCount], this.shader.attributes.aTextureCoord, gl.UNSIGNED_SHORT, true, this.vertByteSize, 2 * 4)
+                    .addAttribute(this.vertexBuffers[this.vertexCount], this.shader.attributes.aColor, gl.UNSIGNED_BYTE, true, this.vertByteSize, 3 * 4)
+                    .addAttribute(this.vertexBuffers[this.vertexCount], this.shader.attributes.aTextureId, gl.FLOAT, false, this.vertByteSize, 4 * 4);
+            }
 
-        if(false)
-        {
+            this.renderer.bindVao(this.vaos[this.vertexCount]);
+
+            this.vertexBuffers[this.vertexCount].upload(buffer.vertices, 0, false);
 
             this.vertexCount++;
+        }
+        else
+        {
+            // lets use the faster option..
+            this.vertexBuffers[this.vertexCount].upload(buffer.vertices, 0, true);
         }
 
         for (i = 0; i < MAX_TEXTURES; i++)
         {
-            this.renderer.boundTextures[i]._virtalBoundId = -1;
+            rendererBoundTextures[i]._virtalBoundId = -1;
         }
 
         // render the groups..
@@ -400,11 +405,17 @@ export default class SpriteRenderer extends ObjectRenderer
 
             for (let j = 0; j < groupTextureCount; j++)
             {
+                currentTexture = group.textures[j];
+
                 // reset virtual ids..
-                this.renderer.bindTexture(group.textures[j], group.ids[j]);
+                // lets do a quick check..
+                if (rendererBoundTextures[group.ids[j]] !== currentTexture)
+                {
+                    this.renderer.bindTexture(currentTexture, group.ids[j], true);
+                }
 
                 // reset the virtualId..
-                group.textures[j]._virtalBoundId = -1;
+                currentTexture._virtalBoundId = -1;
             }
 
             // set the blend mode..
@@ -423,6 +434,7 @@ export default class SpriteRenderer extends ObjectRenderer
     start()
     {
         this.renderer.bindShader(this.shader);
+        this.renderer.bindVao(this.vaos[this.vertexCount]);
     }
 
     /**
