@@ -499,9 +499,6 @@ export default class WebGLRenderer extends SystemRenderer
         const gl = this.gl;
         const glTexture = texture._glTextures[this.CONTEXT_UID];
 
-        // TODO - what if we bind a texture that is already bound?
-        // Should be ok for now..
-
         if (!glTexture)
         {
             // this will also bind the texture..
@@ -545,37 +542,6 @@ export default class WebGLRenderer extends SystemRenderer
     }
 
     /**
-     * Binds the texture but will choose a location for you.
-     *
-     * @param {PIXI.Texture} texture - the new texture
-     * @param {number} location - the texture location
-     * @return {PIXI.WebGLRenderer} Returns location.
-     */
-    smartBindTexture(texture, location)
-    {
-        texture = texture.baseTexture || texture;
-
-        for (let i = 0; i < this.boundTextures.length; i++)
-        {
-            if (this.boundTextures[i] === texture)
-            {
-                return i;
-            }
-        }
-
-        if (location === undefined)
-        {
-            this._nextTextureLocation++;
-            this._nextTextureLocation %= this.boundTextures.length;
-            location = this.boundTextures.length - this._nextTextureLocation - 1;
-        }
-
-        this.bindTexture(texture, location);
-
-        return location;
-    }
-
-     /**
      * unbinds the texture ...
      *
      * @param {PIXI.Texture} texture - the texture to unbind
