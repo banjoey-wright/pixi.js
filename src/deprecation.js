@@ -3,6 +3,7 @@ import * as mesh from './mesh';
 import * as particles from './particles';
 import * as extras from './extras';
 import * as filters from './filters';
+import * as prepare from './prepare';
 
 // provide method to give a stack track for warnings
 // useful for tracking-down where deprecated methods/properties/classes
@@ -177,9 +178,9 @@ Object.defineProperties(core, {
         enumerable: true,
         get()
         {
-            warn('The MovieClip class has been moved to extras.MovieClip, please use extras.MovieClip from now on.');
+            warn('The MovieClip class has been moved to extras.AnimatedSprite, please use extras.AnimatedSprite.');
 
-            return extras.MovieClip;
+            return extras.AnimatedSprite;
         },
     },
 
@@ -348,6 +349,26 @@ Object.defineProperties(core, {
     },
 });
 
+Object.defineProperties(extras, {
+
+    /**
+     * @class
+     * @name MovieClip
+     * @memberof PIXI.extras
+     * @see PIXI.extras.AnimatedSprite
+     * @deprecated since version 4.2.0
+     */
+    MovieClip: {
+        enumerable: true,
+        get()
+        {
+            warn('The MovieClip class has been renamed to AnimatedSprite, please use AnimatedSprite from now on.');
+
+            return extras.AnimatedSprite;
+        },
+    },
+});
+
 core.DisplayObject.prototype.generateTexture = function generateTexture(renderer, scaleMode, resolution)
 {
     warn('generateTexture has moved to the renderer, please use renderer.generateTexture(displayObject)');
@@ -448,6 +469,23 @@ core.Text.prototype.setStyle = function setStyle(style)
 {
     this.style = style;
     warn('setStyle is now deprecated, please use the style property, e.g : myText.style = style;');
+};
+
+/**
+ * @method
+ * @name PIXI.Text#determineFontProperties
+ * @see PIXI.Text#calculateFontProperties
+ * @deprecated since version 4.2.0
+ * @private
+ * @param {string} fontStyle - String representing the style of the font
+ * @return {Object} Font properties object
+ */
+core.Text.prototype.determineFontProperties = function determineFontProperties(fontStyle)
+{
+    warn('determineFontProperties is now deprecated, please use the static calculateFontProperties method, '
+        + 'e.g : Text.calculateFontProperties(fontStyle);');
+
+    return Text.calculateFontProperties(fontStyle);
 };
 
 Object.defineProperties(core.TextStyle.prototype, {
@@ -640,5 +678,57 @@ Object.defineProperty(core.utils, '_saidHello', {
     get()
     {
         return saidHello;
+    },
+});
+
+/**
+ * The number of graphics or textures to upload to the GPU.
+ *
+ * @name PIXI.prepare.canvas.UPLOADS_PER_FRAME
+ * @static
+ * @type {number}
+ * @see PIXI.prepare.BasePrepare.limiter
+ * @deprecated since 4.2.0
+ */
+Object.defineProperty(prepare.canvas, 'UPLOADS_PER_FRAME', {
+    set()
+    {
+        warn('PIXI.CanvasPrepare.UPLOADS_PER_FRAME has been removed. Please set '
+            + 'renderer.plugins.prepare.limiter.maxItemsPerFrame on your renderer');
+        // because we don't have a reference to the renderer, we can't actually set
+        // the uploads per frame, so we'll have to stick with the warning.
+    },
+    get()
+    {
+        warn('PIXI.CanvasPrepare.UPLOADS_PER_FRAME has been removed. Please use '
+            + 'renderer.plugins.prepare.limiter');
+
+        return NaN;
+    },
+});
+
+/**
+ * The number of graphics or textures to upload to the GPU.
+ *
+ * @name PIXI.prepare.webgl.UPLOADS_PER_FRAME
+ * @static
+ * @type {number}
+ * @see PIXI.prepare.BasePrepare.limiter
+ * @deprecated since 4.2.0
+ */
+Object.defineProperty(prepare.webgl, 'UPLOADS_PER_FRAME', {
+    set()
+    {
+        warn('PIXI.WebGLPrepare.UPLOADS_PER_FRAME has been removed. Please set '
+            + 'renderer.plugins.prepare.limiter.maxItemsPerFrame on your renderer');
+        // because we don't have a reference to the renderer, we can't actually set
+        // the uploads per frame, so we'll have to stick with the warning.
+    },
+    get()
+    {
+        warn('PIXI.WebGLPrepare.UPLOADS_PER_FRAME has been removed. Please use '
+            + 'renderer.plugins.prepare.limiter');
+
+        return NaN;
     },
 });

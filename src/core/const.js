@@ -418,6 +418,7 @@ export const SPRITE_BATCH_SIZE = 4096;
  * @type {number}
  */
 export const SPRITE_MAX_TEXTURES = maxRecommendedTextures(32);
+
 /**
  * Can we upload the same buffer in a single frame?
  *

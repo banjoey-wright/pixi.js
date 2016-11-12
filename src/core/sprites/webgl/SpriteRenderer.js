@@ -418,8 +418,6 @@ export default class SpriteRenderer extends ObjectRenderer
             this.vertexBuffers[this.vertexCount].upload(buffer.vertices, 0, true);
         }
 
-        this.vertexCount++;
-
         for (i = 0; i < MAX_TEXTURES; ++i)
         {
             rendererBoundTextures[i]._virtalBoundId = -1;
